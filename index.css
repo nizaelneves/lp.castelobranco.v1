@@ -98,7 +98,12 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  background-color: var(--primary-container); /* Failsafe: same as footer */
 }
+
+
+
 
 body {
   font-family: var(--font-sans);
@@ -108,7 +113,20 @@ body {
   color: var(--on-background);
   background-color: var(--background);
   overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0 !important;
+  padding: 0 !important;
 }
+
+#page-wrapper {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+
+
 
 img {
   max-width: 100%;
@@ -708,17 +726,32 @@ ul, ol {
 .clipping-2 { top: 220px; left: 45%; transform: rotate(5deg); width: 160px; }
 
 @media (max-width: 1024px) {
-  .murder-board {
+  .murder-board, .murder-board--mini {
     height: auto;
     display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
+    flex-direction: column;
+    align-items: center;
+    gap: 64px;
     justify-content: center;
     padding: 40px 0;
+    transform: none;
   }
   .evidence-card, .evidence-clipping {
-    position: static;
+    position: relative;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
     transform: none !important;
+    width: 100%;
+    max-width: 320px;
+    margin-top: 24px;
+  }
+  .evidence-card:hover,
+  .card-4:hover,
+  .murder-board--mini .card-4:hover {
+    transform: scale(1.05) !important;
+    z-index: 50;
   }
   .murder-board__svg { display: none; }
 }
@@ -727,21 +760,12 @@ ul, ol {
 .social-proof {
   padding: var(--section-gap) 0;
   background: #0a0a0a; /* Ultra dark background like image 1 methodology */
-  border-top: 3px solid var(--primary-container);
   position: relative;
   color: #ffffff;
 }
 
-.social-proof::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: var(--gold-accent);
-}
+
+
 
 .social-proof__header {
   text-align: center;
@@ -904,62 +928,66 @@ ul, ol {
 /* ── CTA Section ──────────────────────────────────────────── */
 .cta {
   position: relative;
-  padding: calc(var(--section-gap) * 1.5) 0;
+  padding: calc(var(--section-gap) * 0.5) 0;
   overflow: hidden;
 }
 
-.cta::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--tertiary-deep), var(--primary-container), var(--gold-accent));
-  z-index: 20;
-}
+
+
+
+
 
 .cta__bg {
   position: absolute;
   inset: 0;
-  background: var(--primary-container);
+  background: #ffffff;
   z-index: 0;
 }
 
-.cta__bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%);
-}
-
-.cta__bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  mix-blend-mode: overlay;
-  opacity: 0.2;
-}
 
 .cta__content {
   position: relative;
+  top: 14px;
   z-index: 10;
-  max-width: 1000px; /* Increased to allow single line */
+
+
+  max-width: 1000px;
   margin: 0 auto;
   text-align: center;
-  color: #ffffff;
+  color: var(--on-surface);
   padding: 0 var(--gutter);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.cta__quote {
+  margin-bottom: 40px;
+  border: none;
+  padding: 0;
 }
 
 .cta__title {
-  font-family: var(--font-serif);
-  font-size: clamp(20px, 3.5vw, 36px); /* Reduced to fit in one line */
+  font-family: 'Special Elite', cursive;
+  font-size: clamp(24px, 4vw, 32px);
   font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 20px;
+  line-height: 1.4;
+  color: var(--primary-container);
+  margin-bottom: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap; /* Force one line */
+  letter-spacing: 1px;
+}
+
+.cta__cite {
+  display: block;
+  font-family: 'Special Elite', cursive;
+  font-size: 18px;
+  color: var(--primary-container);
+  font-style: normal;
+  opacity: 0.8;
 }
 
 @media (max-width: 768px) {
@@ -976,19 +1004,21 @@ ul, ol {
 }
 
 /* ── Custom Crosshair Cursor ───────────────────────────────── */
-body {
-  cursor: none;
+/* ── Custom Cursor Reset ──────────────────────────────────── */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
 }
 
-a, button, [role="button"] {
-  cursor: none;
-}
+
 
 .custom-cursor {
   position: fixed;
   width: 24px;
   height: 24px;
-  border: 1px solid var(--primary-container);
+  --cursor-color: var(--primary-container);
+  border: 1px solid var(--cursor-color);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
@@ -998,18 +1028,23 @@ a, button, [role="button"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.1s ease-out, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+  transition: transform 0.1s ease-out, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
   filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); /* Ensures visibility on dark backgrounds */
 }
 
-/* Crosshair lines */
+
 .custom-cursor::before,
 .custom-cursor::after {
   content: '';
   position: absolute;
-  background: var(--primary-container);
+  background: var(--cursor-color);
   opacity: 0.8;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: background-color 0.3s ease;
 }
+
 
 .custom-cursor::before {
   width: 32px;
@@ -1024,33 +1059,37 @@ a, button, [role="button"] {
 .custom-cursor__dot {
   width: 4px;
   height: 4px;
-  background: var(--primary-container);
+  background: var(--cursor-color);
   border-radius: 50%;
   z-index: 2;
+  transition: background-color 0.3s ease;
 }
 
-/* Hover state */
+
+/* Hover state - Modified to change color to gold */
 .custom-cursor.active {
-  width: 48px;
-  height: 48px;
-  background: rgba(152, 30, 30, 0.1);
-  transform: translate(-50%, -50%) rotate(45deg);
+  --cursor-color: var(--gold-accent);
+  transform: translate(-50%, -50%) scale(1.1); /* Subtle scale for feedback */
 }
 
-@media (max-width: 1024px) {
-  body, a, button {
-    cursor: auto;
+
+@media (max-width: 1024px), (hover: none) {
+  * {
+    cursor: auto !important;
   }
   .custom-cursor {
-    display: none;
+    display: none !important;
   }
 }
 
 /* ── Footer ───────────────────────────────────────────────── */
 .footer {
-  background: var(--surface-container-low);
-  border-top: 1px solid var(--surface-container-high);
+  background: var(--primary-container);
+  border-top: none;
+  margin-top: auto;
+  width: 100%;
 }
+
 
 .footer__inner {
   display: flex;
@@ -1064,9 +1103,10 @@ a, button, [role="button"] {
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--on-surface-variant);
+  color: #ffffff;
   text-align: center;
 }
+
 
 /* ── WhatsApp Float Button ────────────────────────────────── */
 .whatsapp-float {
@@ -1170,17 +1210,17 @@ a, button, [role="button"] {
 
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .solution__grid {
+  .solution__grid, .solution__split {
     grid-template-columns: 1fr;
     gap: 48px;
   }
 
-  .solution__text {
+  .solution__text, .solution__content {
     padding-right: 0;
   }
 
-  .solution__visual {
-    height: 400px;
+  .solution__visual, .solution__board-wrapper {
+    height: auto;
   }
 
   .social-proof__grid {
